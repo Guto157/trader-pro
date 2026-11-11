@@ -28,8 +28,10 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 <button class="menu-card" data-open="basketball"><span class="card-icon">🏀</span><span class="card-copy"><strong>Basquete</strong><small>Partidas, desempenho e mercados</small></span><span class="arrow">›</span></button>
 <button class="menu-card history-card" data-open="history"><span class="card-icon green">▤</span><span class="card-copy"><strong>Meu histórico</strong><small>Greens, reds, ROI e resultados</small></span><span class="arrow">›</span></button>
 </div></section>
-<section id="football" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">⚽ Futebol</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="matchesFootball"><span>📅</span>Jogos do dia</button><button class="option" data-open="analysisFootball"><span>📊</span>Analisar partida</button></div></section>
-<section id="basketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">🏀 Basquete</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="matchesBasketball"><span>📅</span>Jogos do dia</button><button class="option" data-open="analysisBasketball"><span>📊</span>Analisar partida</button></div></section>
+<section id="football" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">⚽ Futebol</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="leaguesFootball"><span>🏆</span>Escolher liga</button><button class="option" data-open="analysisFootball"><span>📊</span>Analisar partida</button></div></section>
+<section id="basketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">🏀 Basquete</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="leaguesBasketball"><span>🏆</span>Escolher liga</button><button class="option" data-open="analysisBasketball"><span>📊</span>Analisar partida</button></div></section>
+<section id="leaguesFootball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">FUTEBOL</div><h1 class="view-title">Escolha a liga</h1><p class="view-sub">Selecione uma competição para ver os próximos jogos.</p><input id="footballLeagueSearch" type="search" placeholder="Buscar liga ou país..." style="width:100%;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;margin-bottom:12px"><div id="footballLeagueList" style="display:grid;gap:9px"><div class="empty"><h3>Carregando competições...</h3></div></div></section>
+<section id="leaguesBasketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">BASQUETE</div><h1 class="view-title">Escolha a liga</h1><p class="view-sub">Selecione uma competição para ver os próximos jogos.</p><input id="basketballLeagueSearch" type="search" placeholder="Buscar liga ou país..." style="width:100%;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;margin-bottom:12px"><div id="basketballLeagueList" style="display:grid;gap:9px"><div class="empty"><h3>Carregando competições...</h3></div></div></section>
 <section id="matchesFootball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de futebol</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="footballMatches"><div class="empty"><div class="symbol">⚽</div><h3>Carregando partidas...</h3><p>Consultando a agenda oficial da API-Football.</p></div></div></section>
 <section id="matchesBasketball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de basquete</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="basketballMatches"><div class="empty"><div class="symbol">🏀</div><h3>Carregando partidas...</h3><p>Consultando a API-Basketball.</p></div></div></section>
 
@@ -42,7 +44,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 <script>
 (() => {
  const views=[...document.querySelectorAll('.view')];let current='home';const history=[];
- function openView(id){const target=document.getElementById(id);if(!target)return;history.push(current);current=id;views.forEach(v=>v.classList.toggle('active',v===target));window.scrollTo({top:0,behavior:'instant'});if(id==='matchesFootball')loadFootballFixtures();if(id==='matchesBasketball')loadBasketballFixtures();}
+ function openView(id){const target=document.getElementById(id);if(!target)return;history.push(current);current=id;views.forEach(v=>v.classList.toggle('active',v===target));window.scrollTo({top:0,behavior:'instant'});if(id==='leaguesFootball')loadFootballLeagues();if(id==='leaguesBasketball')loadBasketballLeagues();if(id==='matchesFootball')loadFootballFixtures();if(id==='matchesBasketball')loadBasketballFixtures();}
  function back(){current=history.pop()||'home';views.forEach(v=>v.classList.toggle('active',v.id===current));window.scrollTo({top:0,behavior:'instant'});}
  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openView(b.dataset.open)));
  document.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',back));
@@ -103,6 +105,26 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   activeApiKey=getBuiltInApiKey();
   return activeApiKey;
  }
+ let selectedFootballLeague=null,selectedBasketballLeague=null;
+ async function loadFootballLeagues(){
+  const root=document.getElementById('footballLeagueList');if(!root)return;root.innerHTML='<div class="empty"><h3>Buscando competições...</h3></div>';
+  try{const key=await getApiKey();const response=await fetch('https://v3.football.api-sports.io/leagues?current=true',{headers:{'x-apisports-key':key}});const data=await response.json();if(!response.ok||!Array.isArray(data.response))throw new Error('A API-Football não retornou as competições.');
+   const leagues=data.response.map(item=>({id:item.league.id,name:item.league.name,country:item.country&&item.country.name||'Internacional',season:(item.seasons||[]).filter(s=>s.current).map(s=>s.year).sort((a,b)=>b-a)[0]||(item.seasons||[]).map(s=>s.year).sort((a,b)=>b-a)[0]})).filter(x=>x.id&&x.season).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
+   renderLeagueButtons(root,leagues,'football');
+  }catch(e){root.innerHTML='<div class="empty"><h3>Não foi possível carregar as ligas</h3><p></p><button id="retryFootballLeagues" class="admin-open">Tentar novamente</button></div>';root.querySelector('p').textContent=e.message;root.querySelector('#retryFootballLeagues').onclick=loadFootballLeagues;}
+ }
+ async function loadBasketballLeagues(){
+  const root=document.getElementById('basketballLeagueList');if(!root)return;root.innerHTML='<div class="empty"><h3>Buscando competições...</h3></div>';
+  try{const key=await getApiKey();const response=await fetch('https://v1.basketball.api-sports.io/leagues',{headers:{'x-apisports-key':key}});const data=await response.json();if(!response.ok||!Array.isArray(data.response))throw new Error('A API-Basketball não retornou as competições.');
+   const leagues=data.response.map(item=>({id:item.id||item.league&&item.league.id,name:item.name||item.league&&item.league.name,country:item.country&&item.country.name||item.country||'Internacional'})).filter(x=>x.id&&x.name).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
+   renderLeagueButtons(root,leagues,'basketball');
+  }catch(e){root.innerHTML='<div class="empty"><h3>Não foi possível carregar as ligas</h3><p></p><button id="retryBasketballLeagues" class="admin-open">Tentar novamente</button></div>';root.querySelector('p').textContent=e.message;root.querySelector('#retryBasketballLeagues').onclick=loadBasketballLeagues;}
+ }
+ function renderLeagueButtons(root,leagues,sport){
+  const search=document.getElementById(sport+'LeagueSearch');
+  function draw(){const q=(search.value||'').trim().toLocaleLowerCase('pt-BR');const filtered=leagues.filter(l=>(l.name+' '+l.country).toLocaleLowerCase('pt-BR').includes(q)).slice(0,100);root.innerHTML='';if(!filtered.length){root.innerHTML='<div class="empty"><h3>Nenhuma liga encontrada</h3><p>Tente outro nome.</p></div>';return;}filtered.forEach(league=>{const b=document.createElement('button');b.type='button';b.className='option';b.style.cssText='width:100%;padding:14px;text-align:left';b.textContent=league.name+' • '+league.country;b.addEventListener('click',()=>{if(sport==='football')selectedFootballLeague=league;else selectedBasketballLeague=league;openView(sport==='football'?'matchesFootball':'matchesBasketball');});root.appendChild(b);});}
+  search.value='';search.oninput=draw;draw();
+ }
  async function loadBasketballFixtures(){
   const root=document.getElementById('basketballMatches');
   if(!root)return;
@@ -110,9 +132,10 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   try{
    const key=await getApiKey();
    const today=getTodaySaoPaulo();
+   if(!selectedBasketballLeague){root.innerHTML='<div class="empty"><h3>Escolha uma liga primeiro</h3></div>';return;}
    const dates=Array.from({length:7},(_,i)=>addDays(today,i));
    const responses=await Promise.all(dates.map(async date=>{
-    const url='https://v1.basketball.api-sports.io/games?date='+encodeURIComponent(date)+'&timezone=America%2FSao_Paulo';
+    const url='https://v1.basketball.api-sports.io/games?date='+encodeURIComponent(date)+'&league='+encodeURIComponent(selectedBasketballLeague.id)+'&timezone=America%2FSao_Paulo';
     const response=await fetch(url,{headers:{'x-apisports-key':key}});
     const data=await response.json();
     if(!response.ok||!Array.isArray(data.response)){
@@ -131,7 +154,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
     root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo retornado</h3><p id="basketballDiagnostic"></p><button id="refreshBasketball" class="admin-open">Atualizar</button></div>';root.querySelector('#basketballDiagnostic').textContent='Período consultado: próximos 7 dias a partir de '+today+'. Nenhuma partida futura encontrada.';
     return;
    }
-   root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshBasketball" class="admin-open">Atualizar</button></div><div id="basketballGameList" style="display:grid;gap:10px"></div>';
+   root.innerHTML='<button id="backBasketballLeagues" class="back">← Trocar liga</button><div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+selectedBasketballLeague.name+' • '+games.length+' partidas</span><button id="refreshBasketball" class="admin-open">Atualizar</button></div><div id="basketballGameList" style="display:grid;gap:10px"></div>';document.getElementById('backBasketballLeagues').onclick=()=>openView('leaguesBasketball');
    const list=document.getElementById('basketballGameList');
    games.forEach(game=>{
     const home=game.teams&&game.teams.home?game.teams.home.name:'Mandante';
@@ -143,7 +166,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
     const as=game.scores&&game.scores.away&&game.scores.away.total!=null?game.scores.away.total:'-';
     const date=game.date||game.time||'';
     const card=document.createElement('article');
-    card.className='match-card';
+    card.className='match-card';card.setAttribute('role','button');card.tabIndex=0;card.style.cursor='pointer';card.addEventListener('click',()=>showBasketballDetails(game));card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();showBasketballDetails(game);}});
     card.style.cssText='background:#111d31;border:1px solid #263650;border-radius:14px;padding:14px';
     const title=document.createElement('div');
     title.style.cssText='font-size:10px;color:#8fa4c2;margin-bottom:10px';
@@ -166,6 +189,9 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   if(event.target&&event.target.id==='refreshBasketball')loadBasketballFixtures();
  });
 
+ function showBasketballDetails(game){
+  const root=document.getElementById('basketballMatches');const home=game.teams&&game.teams.home&&game.teams.home.name||'Mandante';const away=game.teams&&game.teams.away&&game.teams.away.name||'Visitante';const league=game.league&&game.league.name||selectedBasketballLeague&&selectedBasketballLeague.name||'Competição';const date=game.date||'';root.innerHTML='<button id="backToBasketballGames" class="back">← Voltar aos jogos</button><div class="eyebrow">DETALHES DA PARTIDA</div><h2 class="view-title"></h2><p class="view-sub"></p><div class="empty"><div class="symbol">📊</div><h3>Partida selecionada</h3><p>Os detalhes básicos foram carregados. A análise estatística e os mercados ainda não estão integrados.</p></div>';root.querySelector('h2').textContent=home+' × '+away;root.querySelector('.view-sub').textContent=league+' • '+(date?formatKickoff(date):'Horário não informado');document.getElementById('backToBasketballGames').onclick=loadBasketballFixtures;
+ }
  function addDays(dateString,days){const d=new Date(dateString+'T12:00:00-03:00');d.setDate(d.getDate()+days);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function getTodaySaoPaulo(){const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day;}
  function formatKickoff(value){
@@ -179,16 +205,17 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   try{
    const key=await getApiKey();
    if(!key){root.innerHTML='<div class="empty"><div class="symbol">🔐</div><h3>Chave bloqueada</h3><p>Abra o painel Admin, informe sua senha no teste de conexão e tente novamente.</p></div>';return;}
+   if(!selectedFootballLeague){root.innerHTML='<div class="empty"><h3>Escolha uma liga primeiro</h3></div>';return;}
    const today=getTodaySaoPaulo();
     const endDate=addDays(today,7);
-    const url='https://v3.football.api-sports.io/fixtures?from='+encodeURIComponent(today)+'&to='+encodeURIComponent(endDate)+'&status=NS&timezone=America%2FSao_Paulo';
+    const url='https://v3.football.api-sports.io/fixtures?league='+encodeURIComponent(selectedFootballLeague.id)+'&season='+encodeURIComponent(selectedFootballLeague.season)+'&from='+encodeURIComponent(today)+'&to='+encodeURIComponent(endDate)+'&status=NS&timezone=America%2FSao_Paulo';
     const response=await fetch(url,{headers:{'x-apisports-key':key}});
    const data=await response.json();
    if(!response.ok||!Array.isArray(data.response))throw new Error(data.errors&&Object.keys(data.errors).length?'A API recusou a consulta. Confira a chave e o plano da conta.':'Não foi possível ler a resposta da API.');
    const now=Date.now();
     const games=data.response.filter(game=>game.fixture&&game.fixture.status&&['NS','TBD'].includes(game.fixture.status.short)&&Date.parse(game.fixture.date)>now).sort((a,b)=>Date.parse(a.fixture.date)-Date.parse(b.fixture.date));
     if(!games.length){root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo futuro encontrado</h3><p>Não há partidas ainda não iniciadas nos próximos 7 dias. Atualize mais tarde.</p><button id="refreshFootball" class="admin-open" style="margin-top:12px">Atualizar</button></div>';return;}
-    root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshFootball" class="admin-open">Atualizar</button></div><div id="footballGameList" style="display:grid;gap:10px"></div>';
+    root.innerHTML='<button id="backFootballLeagues" class="back">← Trocar liga</button><div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+selectedFootballLeague.name+' • '+games.length+' partidas</span><button id="refreshFootball" class="admin-open">Atualizar</button></div><div id="footballGameList" style="display:grid;gap:10px"></div>';document.getElementById('backFootballLeagues').onclick=()=>openView('leaguesFootball');
    const list=document.getElementById('footballGameList');
    games.forEach((game,index)=>{
     const home=game.teams&&game.teams.home?game.teams.home.name:'Mandante';
