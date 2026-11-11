@@ -1,79 +1,67 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b1020">
-  <meta name="description" content="TRADER PRO. Central de análise esportiva e oportunidades de mercado.">
-  <title>TRADER PRO | Sports Intelligence</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="TRADER PRO, inteligência esportiva.">
+<title>TRADER PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#121d31;--line:#263650;--text:#eef3ff;--muted:#8b9ab4;--blue:#5795ff;--green:#4bd6a0;--purple:#a68bff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif}body{min-height:100svh;background:radial-gradient(ellipse at 50% -20%,#1a3154 0,transparent 55%),var(--bg)}
+.app{width:min(100%,980px);min-height:100svh;margin:auto;padding:clamp(18px,4vw,38px);display:flex;flex-direction:column}
+header{height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1e2b42;padding-bottom:15px}
+.brand{display:flex;align-items:center;gap:11px;font:700 17px 'Space Grotesk';letter-spacing:.4px}.mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#5795ff,#315bd0);font-size:23px;box-shadow:0 8px 25px #3269dc44}.brand span:last-child b{color:#76aaff}
+.status{font-size:9px;letter-spacing:1px;color:#9aabc5;display:flex;align-items:center;gap:7px}.status i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px #4bd6a0}
+main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:clamp(26px,6vh,58px) 0}
+.eyebrow{font-size:9px;letter-spacing:2px;color:#82a9e8;font-weight:800}.intro h1{font:700 clamp(27px,5vw,39px) 'Space Grotesk';margin:9px 0 7px;letter-spacing:-1px}.intro p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:30px 0 13px}.section-head h2{font:600 14px 'Space Grotesk';margin:0}.section-head span{font-size:9px;color:#70829f;letter-spacing:1px}
+.menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.menu-card{min-height:132px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#16243a,#111a2b);padding:18px;display:flex;align-items:center;gap:14px;text-align:left;color:var(--text);cursor:pointer;transition:transform .16s,border-color .16s,background .16s}
+.menu-card:active{transform:scale(.985)}.menu-card:hover{border-color:#5278b3;background:#192a44}
+.card-icon{width:47px;height:47px;flex:0 0 47px;border-radius:13px;display:grid;place-items:center;font-size:23px;background:#24416b66}.card-icon.purple{background:#45357655}.card-icon.green{background:#1d5b4b55}.card-icon.orange{background:#714b2a55}
+.card-copy{min-width:0;flex:1}.card-copy strong{display:block;font:600 14px 'Space Grotesk';margin-bottom:5px}.card-copy small{display:block;color:var(--muted);font-size:10px;line-height:1.45}.arrow{font-size:20px;color:#7894bc}
+.view{display:none}.view.active{display:block}.back{border:1px solid var(--line);background:#131f33;color:#dce7f9;border-radius:9px;padding:10px 13px;font:600 11px 'DM Sans';cursor:pointer;margin-bottom:25px}.view-title{font:700 clamp(25px,5vw,34px) 'Space Grotesk';margin:0 0 7px}.view-sub{font-size:12px;color:var(--muted);margin:0 0 22px;line-height:1.6}
+.sport-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.option{border:1px solid var(--line);background:#142138;color:var(--text);border-radius:12px;padding:18px;text-align:left;cursor:pointer;font:600 13px 'DM Sans'}.option span{font-size:23px;display:block;margin-bottom:9px}
+.empty{border:1px dashed #344765;background:#111b2d;border-radius:14px;padding:clamp(24px,5vw,42px);text-align:center}.empty .symbol{font-size:32px}.empty h3{font:600 15px 'Space Grotesk';margin:12px 0 7px}.empty p{font-size:11px;color:var(--muted);line-height:1.7;margin:0 auto;max-width:410px}
+footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-content:space-between;gap:15px;color:#71829e;font-size:9px;line-height:1.5}footer span:last-child{text-align:right}
+@media(max-width:560px){.app{padding:16px 15px max(16px,env(safe-area-inset-bottom))}header{height:52px}.brand{font-size:15px}.mark{width:34px;height:34px}.status{font-size:8px}.menu-grid{gap:9px}.menu-card{min-height:116px;padding:13px 11px;gap:10px;border-radius:13px}.card-icon{width:39px;height:39px;flex-basis:39px;font-size:20px;border-radius:11px}.card-copy strong{font-size:12px}.card-copy small{font-size:9px}.arrow{font-size:17px}.intro p{font-size:12px}.section-head{margin-top:26px}.section-head span{font-size:8px}footer{font-size:8px}}
+@media(max-width:360px){.menu-card{gap:8px;padding:11px 9px}.card-icon{width:34px;height:34px;flex-basis:34px}.card-copy strong{font-size:11px}.card-copy small{font-size:8px}}
+</style>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#" aria-label="TRADER PRO início">
-        <span class="brand-mark">T<span>•</span></span>
-        <span class="brand-name">TRADER<span>PRO</span><small>SPORTS INTELLIGENCE</small></span>
-      </a>
-      <div class="side-label">WORKSPACE</div>
-      <nav class="main-nav" aria-label="Navegação principal">
-        <button class="nav-item active" data-view="overview"><span class="nav-icon">▦</span> Visão geral</button>
-        <button class="nav-item" data-view="matches"><span class="nav-icon">◷</span> Jogos</button>
-        <button class="nav-item" data-view="analysis"><span class="nav-icon">⌁</span> Análises</button>
-        <button class="nav-item" data-view="history"><span class="nav-icon">▤</span> Histórico</button>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="status-card"><span class="status-dot"></span><div><strong>Central de dados</strong><small>Preparada para integração</small></div></div>
-        <div class="profile"><div class="avatar">TP</div><div><strong>Trader Pro</strong><small>Conta pessoal</small></div><span class="profile-more">•••</span></div>
-      </div>
-    </aside>
-
-    <main class="main-area">
-      <header class="topbar">
-        <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menu">☰</button>
-        <div class="breadcrumb">Workspace <span>/</span> <strong id="breadcrumbPage">Visão geral</strong></div>
-        <div class="top-actions"><span class="live-indicator"><i></i> SISTEMA ONLINE</span><button class="icon-button" aria-label="Notificações">♧</button><div class="top-avatar">TP</div></div>
-      </header>
-
-      <section class="page-content">
-        <div class="welcome-row">
-          <div><div class="eyebrow">SEGUNDA-FEIRA, 10 DE NOVEMBRO</div><h1 id="pageTitle">Visão geral</h1><p class="subtitle">Inteligência de mercado para decisões mais bem fundamentadas.</p></div>
-          <button class="date-button" id="dateButton"><span>▦</span> <span id="todayLabel">Hoje</span> <b>⌄</b></button>
-        </div>
-
-        <section class="sport-switch" aria-label="Selecionar esporte">
-          <button class="sport-tab selected" data-sport="football"><span class="sport-symbol">⚽</span> Futebol</button>
-          <button class="sport-tab" data-sport="basketball"><span class="sport-symbol">🏀</span> Basquete</button>
-          <span class="sport-note">SELECIONE O ESPORTE</span>
-        </section>
-
-        <section class="metric-grid">
-          <article class="metric-card"><div class="metric-head"><span>JOGOS DISPONÍVEIS</span><span class="metric-icon blue">▦</span></div><div class="metric-value" id="matchCount">—</div><div class="metric-foot">Aguardando fonte de partidas</div></article>
-          <article class="metric-card"><div class="metric-head"><span>ANÁLISES GERADAS</span><span class="metric-icon purple">⌁</span></div><div class="metric-value">—</div><div class="metric-foot">Nenhuma análise registrada</div></article>
-          <article class="metric-card"><div class="metric-head"><span>ENTRADAS VALIDADAS</span><span class="metric-icon green">↗</span></div><div class="metric-value">—</div><div class="metric-foot">Sem recomendações publicadas</div></article>
-          <article class="metric-card"><div class="metric-head"><span>DESEMPENHO</span><span class="metric-icon orange">◷</span></div><div class="metric-value">—</div><div class="metric-foot">Aguardando histórico real</div></article>
-        </section>
-
-        <section class="content-grid">
-          <article class="panel games-panel">
-            <div class="panel-heading"><div><div class="eyebrow">CENTRAL DE PARTIDAS</div><h2>Jogos do dia</h2></div><button class="text-button" data-view-link="matches">Ver todos <span>→</span></button></div>
-            <div class="filter-row"><div class="search-box"><span>⌕</span><input id="gameSearch" type="search" placeholder="Buscar time ou campeonato..." aria-label="Buscar time ou campeonato"></div><button class="filter-button" id="filterButton">☷ <span>Filtros</span></button></div>
-            <div class="empty-state"><div class="empty-graphic"><span class="empty-ball">⚽</span><span class="empty-search">⌕</span></div><h3>Nenhum jogo carregado</h3><p>Os jogos aparecerão aqui assim que a fonte de dados esportivos estiver conectada. Nenhuma partida ou estatística será inventada.</p><span class="source-status"><i></i> FONTE DE DADOS NÃO CONFIGURADA</span></div>
-          </article>
-
-          <aside class="right-column">
-            <article class="panel quick-panel"><div class="panel-heading"><div><div class="eyebrow">FERRAMENTAS</div><h2>Acesso rápido</h2></div></div><button class="quick-action" data-view-link="analysis"><span class="quick-icon purple">⌁</span><span><strong>Nova análise</strong><small>Avaliar uma partida</small></span><b>→</b></button><button class="quick-action" data-view-link="history"><span class="quick-icon green">▤</span><span><strong>Meu histórico</strong><small>Acompanhar resultados</small></span><b>→</b></button></article>
-            <article class="panel principles-panel"><div class="eyebrow">CRITÉRIOS TRADER PRO</div><h2>Dados antes da entrada.</h2><p>Uma oportunidade só deve ser apresentada quando houver informação suficiente para avaliar o mercado.</p><div class="principle"><span>01</span><div><strong>Probabilidade estimada</strong><small>Baseada em dados verificáveis</small></div></div><div class="principle"><span>02</span><div><strong>Valor esperado (EV)</strong><small>Comparação com a odd disponível</small></div></div><div class="principle"><span>03</span><div><strong>Gestão de risco</strong><small>Transparência sobre incertezas</small></div></div></article>
-          </aside>
-        </section>
-        <footer class="footer"><span>TRADER PRO <b>•</b> SPORTS INTELLIGENCE</span><span>Análises informativas. Não existe garantia de resultado.</span></footer>
-      </section>
-    </main>
-  </div>
-  <div class="toast" id="toast" role="status"></div>
-  <script src="assets/js/app.js"></script>
+<div class="app">
+<header><div class="brand"><span class="mark">T</span><span>TRADER<b>PRO</b></span></div><div class="status"><i></i> CENTRAL ESPORTIVA</div></header>
+<main>
+<section id="home" class="view active">
+<div class="intro"><div class="eyebrow">SPORTS INTELLIGENCE</div><h1>O que você deseja analisar?</h1><p>Escolha uma área para abrir uma tela exclusiva. Tudo organizado para caber na tela do seu celular.</p></div>
+<div class="section-head"><h2>Acesso rápido</h2><span>SELECIONE UMA OPÇÃO</span></div>
+<div class="menu-grid">
+<button class="menu-card" data-open="football"><span class="card-icon">⚽</span><span class="card-copy"><strong>Futebol</strong><small>Jogos, mercados e estatísticas</small></span><span class="arrow">›</span></button>
+<button class="menu-card" data-open="basketball"><span class="card-icon">🏀</span><span class="card-copy"><strong>Basquete</strong><small>Partidas, desempenho e mercados</small></span><span class="arrow">›</span></button>
+<button class="menu-card" data-open="analysis"><span class="card-icon purple">⌁</span><span class="card-copy"><strong>Nova análise</strong><small>Encontrar e avaliar uma entrada</small></span><span class="arrow">›</span></button>
+<button class="menu-card" data-open="history"><span class="card-icon green">▤</span><span class="card-copy"><strong>Meu histórico</strong><small>Greens, reds, ROI e resultados</small></span><span class="arrow">›</span></button>
+</div>
+</section>
+<section id="football" class="view"><button class="back" data-back>← Voltar ao início</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">⚽ Futebol</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="matchesFootball"><span>📅</span>Jogos do dia</button><button class="option" data-open="analysis"><span>📊</span>Analisar partida</button></div></section>
+<section id="basketball" class="view"><button class="back" data-back>← Voltar ao início</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">🏀 Basquete</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="matchesBasketball"><span>📅</span>Jogos do dia</button><button class="option" data-open="analysis"><span>📊</span>Analisar partida</button></div></section>
+<section id="matchesFootball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de futebol</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div class="empty"><div class="symbol">⚽</div><h3>Fonte de partidas não conectada</h3><p>Os jogos serão exibidos aqui quando a integração de dados estiver ativa. Nenhuma partida será inventada.</p></div></section>
+<section id="matchesBasketball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de basquete</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div class="empty"><div class="symbol">🏀</div><h3>Fonte de partidas não conectada</h3><p>Os jogos serão exibidos aqui quando a integração de dados estiver ativa. Nenhuma partida será inventada.</p></div></section>
+<section id="analysis" class="view"><button class="back" data-back>← Voltar ao início</button><div class="eyebrow">TRADER PRO</div><h1 class="view-title">Nova análise</h1><p class="view-sub">Escolha um esporte para iniciar a avaliação de uma partida.</p><div class="sport-options"><button class="option" data-open="football"><span>⚽</span>Futebol</button><button class="option" data-open="basketball"><span>🏀</span>Basquete</button></div></section>
+<section id="history" class="view"><button class="back" data-back>← Voltar ao início</button><div class="eyebrow">DESEMPENHO</div><h1 class="view-title">Meu histórico</h1><p class="view-sub">Acompanhe as entradas registradas e os resultados.</p><div class="empty"><div class="symbol">▤</div><h3>Nenhuma entrada registrada</h3><p>O histórico será preenchido quando as análises e entradas estiverem integradas.</p></div></section>
+</main>
+<footer><span>TRADER PRO • SPORTS INTELLIGENCE</span><span>Análises informativas. Sem garantia de resultado.</span></footer>
+</div>
+<script>
+(() => {
+ const views=[...document.querySelectorAll('.view')];const stack=['home'];
+ function openView(id){const target=document.getElementById(id);if(!target)return;views.forEach(v=>v.classList.toggle('active',v===target));stack.push(id);window.scrollTo({top:0,behavior:'instant'});}
+ function back(){if(stack.length>1)stack.pop();const id=stack[stack.length-1];views.forEach(v=>v.classList.toggle('active',v.id===id));window.scrollTo({top:0,behavior:'instant'});}
+ document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openView(b.dataset.open)));
+ document.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',back));
+})();
+</script>
 </body>
 </html>
