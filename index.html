@@ -179,8 +179,13 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
     const status=document.createElement('div');status.style.cssText='font-size:10px;color:#9aabc5';status.textContent=game.state==='NS'||game.state==='TBD'||game.state==='NOT STARTED'?'AINDA NÃO INICIADA':game.status+' • '+game.score;
     card.append(meta,teams,status);
     card.addEventListener('click',()=>{
-     if(game.sport==='FUTEBOL'){showFixtureDetails(game.raw);openView('matchesFootball');}
-     else{showBasketballDetails(game.raw);openView('matchesBasketball');}
+     if(game.sport==='FUTEBOL'){
+      selectedFootballLeague={id:game.raw.league.id,name:game.raw.league.name,country:game.raw.league.country,season:game.raw.league.season};
+      openView('matchesFootball');
+     }else{
+      selectedBasketballLeague={id:game.raw.league.id,name:game.raw.league.name,country:'Estados Unidos'};
+      openView('matchesBasketball');
+     }
     });
     root.appendChild(card);
    });
