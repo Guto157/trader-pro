@@ -112,17 +112,17 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   root.innerHTML='<div class="empty"><div class="symbol">⏳</div><h3>Buscando jogos...</h3><p>Consultando a API-Basketball.</p></div>';
   try{
    const key=await getApiKey();
-   const today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+   const today=getTodaySaoPaulo();
    const url='https://v1.basketball.api-sports.io/games?date='+encodeURIComponent(today)+'&timezone=America%2FSao_Paulo';
    const response=await fetch(url,{headers:{'x-apisports-key':key}});
    const data=await response.json();
    if(!response.ok||!Array.isArray(data.response)){
     const detail=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Resposta inválida da API.';
-    throw new Error('A API-Basketball não liberou a consulta. Verifique se o produto Basquete está habilitado na sua conta API-Sports. '+detail);
+    throw new Error('HTTP '+response.status+' • API-Basketball: '+detail);
    }
    const games=data.response;
    if(!games.length){
-    root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo encontrado hoje</h3><p>A API-Basketball não retornou partidas para '+today+'.</p><button id="refreshBasketball" class="admin-open">Atualizar</button></div>';
+    const apiErrors=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Nenhum erro informado pela API.';root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo retornado</h3><p id="basketballDiagnostic"></p><button id="refreshBasketball" class="admin-open">Atualizar</button></div>';root.querySelector('#basketballDiagnostic').textContent='Data consultada: '+today+'. HTTP '+response.status+'. Resultados: '+(data.results??games.length)+'. Detalhe: '+apiErrors;
     return;
    }
    root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshBasketball" class="admin-open">Atualizar</button></div><div id="basketballGameList" style="display:grid;gap:10px"></div>';
@@ -160,6 +160,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   if(event.target&&event.target.id==='refreshBasketball')loadBasketballFixtures();
  });
 
+ function getTodaySaoPaulo(){const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day;}
  function formatKickoff(value){
   if(!value)return 'Horário não informado';
   return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Sao_Paulo'}).format(new Date(value));
@@ -171,13 +172,13 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   try{
    const key=await getApiKey();
    if(!key){root.innerHTML='<div class="empty"><div class="symbol">🔐</div><h3>Chave bloqueada</h3><p>Abra o painel Admin, informe sua senha no teste de conexão e tente novamente.</p></div>';return;}
-   const today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+   const today=getTodaySaoPaulo();
    const url='https://v3.football.api-sports.io/fixtures?date='+encodeURIComponent(today)+'&timezone=America%2FSao_Paulo';
    const response=await fetch(url,{headers:{'x-apisports-key':key}});
    const data=await response.json();
    if(!response.ok||!Array.isArray(data.response))throw new Error(data.errors&&Object.keys(data.errors).length?'A API recusou a consulta. Confira a chave e o plano da conta.':'Não foi possível ler a resposta da API.');
    const games=data.response;
-   if(!games.length){root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo encontrado hoje</h3><p>A API-Football não retornou partidas para '+today+'.</p></div>';return;}
+   if(!games.length){const apiErrors=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Nenhum erro informado pela API.';root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo retornado</h3><p id="footballDiagnostic"></p><button id="refreshFootball" class="admin-open" style="margin-top:12px">Atualizar</button></div>';root.querySelector('#footballDiagnostic').textContent='Data consultada: '+today+'. HTTP '+response.status+'. Resultados: '+(data.results??games.length)+'. Detalhe: '+apiErrors;return;}
    root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshFootball" class="admin-open">Atualizar</button></div><div id="footballGameList" style="display:grid;gap:10px"></div>';
    const list=document.getElementById('footballGameList');
    games.forEach((game,index)=>{
