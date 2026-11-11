@@ -90,8 +90,14 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
  let activeApiKey=sessionStorage.getItem('traderpro_unlocked_apifootball_key')||'';
  // Chave padrão ofuscada em blocos. Isso dificulta a leitura casual, mas não substitui um backend.
  function getBuiltInApiKey(){
-  const fragments=['Y2Y=','YjBjOWYw','ZWMyODM5','MTY0ZGM4','OWZjNTMz','NjdkNjgy'];
-  return atob(fragments.reverse().join(''));
+  const data=[38,151,252,85,200,38,200,123,56,144,188,157,13,109,176,193,186,193,10,177,215,226,126,0,232,1,224,121,210,254,92,183];
+  const order=[12,23,3,14,25,5,16,27,7,18,29,9,20,0,31,11,22,2,13,24,4,15,26,6,17,28,8,19,30,10,21,1];
+  const chars=new Uint8Array(32);
+  for(let i=0;i<data.length;i++){
+   const p=order[i];
+   chars[p]=data[i]^((p*37+91)%256);
+  }
+  return String.fromCharCode(...chars);
  }
  async function getApiKey(){
   if(activeApiKey)return activeApiKey;
