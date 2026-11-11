@@ -27,7 +27,9 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 <button class="menu-card" data-open="football"><span class="card-icon">⚽</span><span class="card-copy"><strong>Futebol</strong><small>Jogos, mercados e estatísticas</small></span><span class="arrow">›</span></button>
 <button class="menu-card" data-open="basketball"><span class="card-icon">🏀</span><span class="card-copy"><strong>Basquete</strong><small>Partidas, desempenho e mercados</small></span><span class="arrow">›</span></button>
 <button class="menu-card history-card" data-open="history"><span class="card-icon green">▤</span><span class="card-copy"><strong>Meu histórico</strong><small>Greens, reds, ROI e resultados</small></span><span class="arrow">›</span></button>
+<button class="menu-card" data-open="todayGames"><span class="card-icon orange">📅</span><span class="card-copy"><strong>Jogos do dia</strong><small>NBA e principais ligas de futebol</small></span><span class="arrow">›</span></button>
 </div></section>
+<section id="todayGames" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">AGENDA DIÁRIA</div><h1 class="view-title">Jogos do dia</h1><p id="todayGamesDate" class="view-sub">NBA e principais ligas dos países selecionados.</p><div id="todayGamesContent"><div class="empty"><div class="symbol">📅</div><h3>Carregando jogos...</h3></div></div></section>
 <section id="football" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">⚽ Futebol</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="leaguesFootball"><span>🏆</span>Escolher liga</button><button class="option" data-open="analysisFootball"><span>📊</span>Analisar partida</button></div></section>
 <section id="basketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">🏀 Basquete</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="leaguesBasketball"><span>🏆</span>Escolher liga</button><button class="option" data-open="analysisBasketball"><span>📊</span>Analisar partida</button></div></section>
 <section id="leaguesFootball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">FUTEBOL</div><h1 class="view-title">Escolha a liga</h1><p class="view-sub">Ligas principais pré-selecionadas. Pesquise para encontrar qualquer outra competição disponível na API.</p><input id="footballLeagueSearch" type="search" placeholder="Buscar liga ou país..." style="width:100%;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;margin-bottom:12px"><div id="footballLeagueList" style="display:grid;gap:9px"><div class="empty"><h3>Carregando competições...</h3></div></div></section>
@@ -44,7 +46,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 <script>
 (() => {
  const views=[...document.querySelectorAll('.view')];let current='home';const history=[];
- function openView(id){const target=document.getElementById(id);if(!target)return;history.push(current);current=id;views.forEach(v=>v.classList.toggle('active',v===target));window.scrollTo({top:0,behavior:'instant'});if(id==='leaguesFootball')loadFootballLeagues();if(id==='leaguesBasketball')loadBasketballLeagues();if(id==='matchesFootball')loadFootballFixtures();if(id==='matchesBasketball')loadBasketballFixtures();}
+ function openView(id){const target=document.getElementById(id);if(!target)return;history.push(current);current=id;views.forEach(v=>v.classList.toggle('active',v===target));window.scrollTo({top:0,behavior:'instant'});if(id==='leaguesFootball')loadFootballLeagues();if(id==='leaguesBasketball')loadBasketballLeagues();if(id==='matchesFootball')loadFootballFixtures();if(id==='matchesBasketball')loadBasketballFixtures();if(id==='todayGames')loadTodayGames();}
  function back(){current=history.pop()||'home';views.forEach(v=>v.classList.toggle('active',v.id===current));window.scrollTo({top:0,behavior:'instant'});}
  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openView(b.dataset.open)));
  document.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',back));
@@ -128,6 +130,65 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
  }
  function isFeaturedBasketballLeague(league){
   return normalizeLeagueText(league.name)==='nba';
+ }
+ async function loadTodayGames(){
+  const root=document.getElementById('todayGamesContent');
+  const dateLabel=document.getElementById('todayGamesDate');
+  if(!root)return;
+  const today=getTodaySaoPaulo();
+  dateLabel.textContent='Data: '+new Intl.DateTimeFormat('pt-BR',{dateStyle:'full',timeZone:'America/Sao_Paulo'}).format(new Date())+'. NBA e principais ligas selecionadas.';
+  root.innerHTML='<div class="empty"><div class="symbol">⏳</div><h3>Buscando jogos de hoje...</h3><p>Consultando futebol e NBA.</p></div>';
+  try{
+   const key=await getApiKey();
+   const requests=await Promise.allSettled([
+    fetch('https://v3.football.api-sports.io/fixtures?date='+encodeURIComponent(today)+'&timezone=America%2FSao_Paulo',{headers:{'x-apisports-key':key}}),
+    fetch('https://v1.basketball.api-sports.io/games?date='+encodeURIComponent(today)+'&timezone=America%2FSao_Paulo',{headers:{'x-apisports-key':key}})
+   ]);
+   const read=async(result,label)=>{
+    if(result.status!=='fulfilled')throw new Error(label+': '+(result.reason&&result.reason.message||'falha de rede'));
+    const response=result.value,data=await response.json();
+    if(!response.ok||!Array.isArray(data.response)){
+     const details=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'resposta inválida';
+     throw new Error(label+' (HTTP '+response.status+'): '+details);
+    }
+    return data.response;
+   };
+   const [footballResult,basketballResult]=await Promise.all([
+    read(requests[0],'API-Football'),read(requests[1],'API-Basketball')
+   ]);
+   const football=footballResult.filter(game=>{
+    const league={name:game.league&&game.league.name,country:game.league&&game.league.country};
+    return isFeaturedFootballLeague(league);
+   }).map(game=>({sport:'FUTEBOL',league:game.league.name,country:game.league.country,home:game.teams&&game.teams.home&&game.teams.home.name||'Mandante',away:game.teams&&game.teams.away&&game.teams.away.name||'Visitante',date:game.fixture&&game.fixture.date,status:game.fixture&&game.fixture.status&&game.fixture.status.long||'Agendado',state:game.fixture&&game.fixture.status&&game.fixture.status.short||'',score:(game.goals&&game.goals.home!=null?game.goals.home:'-')+' × '+(game.goals&&game.goals.away!=null?game.goals.away:'-'),raw:game}));
+   const basketball=basketballResult.filter(game=>normalizeLeagueText(game.league&&(game.league.name||game.league))==='nba'||normalizeLeagueText(game.league&&(game.league.name||game.league)).startsWith('nba ')).map(game=>({sport:'NBA',league:'NBA',country:'Estados Unidos',home:game.teams&&game.teams.home&&game.teams.home.name||'Mandante',away:game.teams&&game.teams.away&&game.teams.away.name||'Visitante',date:game.date||game.time,status:game.status&&(game.status.long||game.status.short)||'Agendado',state:game.status&&(game.status.short||game.status.long)||'',score:(game.scores&&game.scores.home&&game.scores.home.total!=null?game.scores.home.total:'-')+' × '+(game.scores&&game.scores.away&&game.scores.away.total!=null?game.scores.away.total:'-'),raw:game}));
+   const games=football.concat(basketball).filter(game=>game.date).sort((a,b)=>Date.parse(a.date)-Date.parse(b.date));
+   root.innerHTML='';
+   const toolbar=document.createElement('div');toolbar.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:13px;color:#9aabc5;font-size:10px';
+   const count=document.createElement('span');count.textContent=games.length+' jogos encontrados';
+   const refresh=document.createElement('button');refresh.type='button';refresh.className='admin-open';refresh.textContent='Atualizar';refresh.addEventListener('click',loadTodayGames);
+   toolbar.append(count,refresh);root.appendChild(toolbar);
+   if(!games.length){
+    const empty=document.createElement('div');empty.className='empty';empty.innerHTML='<div class="symbol">📭</div><h3>Nenhum jogo encontrado hoje</h3><p>As duas APIs responderam, mas não retornaram partidas das ligas selecionadas para esta data.</p>';root.appendChild(empty);return;
+   }
+   games.forEach(game=>{
+    const card=document.createElement('button');card.type='button';card.className='option';card.style.cssText='width:100%;display:block;text-align:left;padding:14px;margin-bottom:9px';
+    const meta=document.createElement('div');meta.style.cssText='display:flex;justify-content:space-between;gap:8px;color:#8fa4c4;font-size:9px;margin-bottom:9px';
+    const league=document.createElement('span');league.textContent=game.sport+' • '+game.league+(game.country?' • '+game.country:'');
+    const time=document.createElement('span');time.textContent=formatKickoff(game.date);meta.append(league,time);
+    const teams=document.createElement('div');teams.style.cssText='font:600 13px Space Grotesk;margin-bottom:7px';teams.textContent=game.home+' × '+game.away;
+    const status=document.createElement('div');status.style.cssText='font-size:10px;color:#9aabc5';status.textContent=game.state==='NS'||game.state==='TBD'||game.state==='NOT STARTED'?'AINDA NÃO INICIADA':game.status+' • '+game.score;
+    card.append(meta,teams,status);
+    card.addEventListener('click',()=>{
+     if(game.sport==='FUTEBOL'){showFixtureDetails(game.raw);openView('matchesFootball');}
+     else{showBasketballDetails(game.raw);openView('matchesBasketball');}
+    });
+    root.appendChild(card);
+   });
+  }catch(error){
+   root.innerHTML='<div class="empty"><div class="symbol">⚠️</div><h3>Falha ao consultar os jogos</h3><p></p><button id="retryTodayGames" class="admin-open" style="margin-top:12px">Tentar novamente</button></div>';
+   root.querySelector('p').textContent=error.message||'Erro na consulta das APIs.';
+   root.querySelector('#retryTodayGames').addEventListener('click',loadTodayGames);
+  }
  }
  async function loadFootballLeagues(){
   const root=document.getElementById('footballLeagueList');if(!root)return;root.innerHTML='<div class="empty"><h3>Buscando competições...</h3></div>';
