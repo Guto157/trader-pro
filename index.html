@@ -112,13 +112,11 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   if(sport==='football'){
    const exact=[
     ['premier league','england'],['la liga','spain'],['bundesliga','germany'],['serie a','italy'],['ligue 1','france'],
-    ['eredivisie','netherlands'],['primeira liga','portugal'],['champions league',''],['europa league',''],['conference league',''],
-    ['copa libertadores',''],['copa sudamericana',''],['serie a','brazil'],['liga profesional','argentina'],
-    ['major league soccer',''],['mls',''],['liga mx','mexico'],['saudi pro league','saudi arabia']
+    ['champions league',''],['copa libertadores',''],['serie a','brazil']
    ];
    return exact.some(([n,c])=>name===n&&(!c||country.includes(c)));
   }
-  const allowed=['nba','wnba','euroleague','eurocup','basketball champions league','acb','liga acb','lnb','pro a','bsl','basketbol super ligi','nbb','novo basquete brasil','cba','nbl'];
+  const allowed=['nba','euroleague','nbb','novo basquete brasil'];
   return allowed.includes(name)||allowed.some(n=>name.startsWith(n+' '));
  }
  async function loadFootballLeagues(){
