@@ -33,8 +33,8 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 <section id="matchesFootball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de futebol</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="footballMatches"><div class="empty"><div class="symbol">⚽</div><h3>Carregando partidas...</h3><p>Consultando a agenda oficial da API-Football.</p></div></div></section>
 <section id="matchesBasketball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de basquete</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="basketballMatches"><div class="empty"><div class="symbol">🏀</div><h3>Carregando partidas...</h3><p>Consultando a API-Basketball.</p></div></div></section>
 
-<section id="analysisFootball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ANÁLISE DE FUTEBOL</div><h1 class="view-title">Analisar partida</h1><p class="view-sub">Área de análise de futebol.</p><div class="empty"><div class="symbol">📊</div><h3>Dados de partidas ainda não conectados</h3><p>Assim que a fonte de jogos, estatísticas e odds estiver integrada, você poderá selecionar uma partida e receber a análise dos mercados. Não vamos exibir palpites ou números sem dados verificados.</p></div></section>
-<section id="analysisBasketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ANÁLISE DE BASQUETE</div><h1 class="view-title">Analisar partida</h1><p class="view-sub">Área de análise de basquete.</p><div class="empty"><div class="symbol">📊</div><h3>Dados de partidas ainda não conectados</h3><p>Assim que a fonte de jogos, estatísticas e odds estiver integrada, você poderá selecionar uma partida e receber a análise dos mercados. Não vamos exibir palpites ou números sem dados verificados.</p></div></section>
+<section id="analysisFootball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ANÁLISE DE FUTEBOL</div><h1 class="view-title">Analisar partida</h1><p class="view-sub">Escolha uma partida futura para iniciar o processo.</p><div class="empty"><div class="symbol">📊</div><h3>A análise automática ainda não está implementada</h3><p>Por enquanto, o TRADER PRO apenas consulta a agenda de jogos. A análise completa deverá reunir forma recente, estatísticas, escalações, desfalques e odds para avaliar os mercados. Nenhuma entrada será inventada enquanto esses dados e o motor de análise não estiverem conectados.</p><button class="admin-open" data-open="matchesFootball" style="margin-top:14px">Ver jogos futuros</button></div></section>
+<section id="analysisBasketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ANÁLISE DE BASQUETE</div><h1 class="view-title">Analisar partida</h1><p class="view-sub">Escolha uma partida futura para iniciar o processo.</p><div class="empty"><div class="symbol">📊</div><h3>A análise automática ainda não está implementada</h3><p>Por enquanto, o TRADER PRO apenas consulta a agenda de jogos. A análise completa deverá reunir desempenho recente, estatísticas, jogadores disponíveis e odds para avaliar os mercados. Nenhuma entrada será inventada enquanto esses dados e o motor de análise não estiverem conectados.</p><button class="admin-open" data-open="matchesBasketball" style="margin-top:14px">Ver jogos futuros</button></div></section>
 <section id="admin" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">CONFIGURAÇÕES</div><h1 class="view-title">Painel de administração</h1><p class="view-sub">Configure a chave da API-Football neste navegador.</p><div class="empty" style="text-align:left;margin-bottom:16px"><h3 style="margin-top:0">⚠️ Atenção à segurança</h3><p style="margin:0">A chave será criptografada com AES-256-GCM usando uma senha sua antes de ser salva neste navegador. Use uma senha que você não esqueça. Isso protege o armazenamento local, mas não impede a captura da chave enquanto ela estiver desbloqueada e sendo usada. A chave não será gravada no GitHub.</p></div><div style="border:1px solid var(--line);background:#121d31;border-radius:14px;padding:18px"><label for="footballApiKey" style="display:block;font-size:11px;color:#a9bad3;margin-bottom:9px">CHAVE API • API-FOOTBALL</label><div style="display:flex;gap:8px"><input id="footballApiKey" type="password" autocomplete="off" placeholder="Cole sua chave API aqui" style="min-width:0;flex:1;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;font:12px 'DM Sans'"><button id="toggleApiKey" class="back" style="margin:0;padding:10px">Mostrar</button></div><label for="apiProtectionPassword" style="display:block;font-size:11px;color:#a9bad3;margin:15px 0 9px">SENHA PARA CRIPTOGRAFAR A CHAVE</label><input id="apiProtectionPassword" type="password" autocomplete="new-password" placeholder="Crie uma senha com pelo menos 8 caracteres" style="width:100%;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;font:12px 'DM Sans'"><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:13px"><button id="saveApiKey" class="admin-open" style="padding:11px 14px;background:#24416b">Salvar criptografada</button><button id="testApiKey" class="admin-open" style="padding:11px 14px">Testar conexão</button><button id="removeApiKey" class="admin-open" style="padding:11px 14px">Apagar chave</button></div><p id="apiKeyStatus" role="status" style="font-size:11px;line-height:1.6;color:#9aabc5;margin:14px 0 0">A chave será protegida por senha e criptografia no navegador.</p></div></section>
 <section id="history" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">DESEMPENHO</div><h1 class="view-title">Meu histórico</h1><p class="view-sub">Acompanhe as entradas registradas e os resultados.</p><div class="empty"><div class="symbol">▤</div><h3>Nenhuma entrada registrada</h3><p>O histórico será preenchido quando as análises e entradas estiverem integradas.</p></div></section>
 </main><footer><span>TRADER PRO • SPORTS INTELLIGENCE</span><span>Análises informativas. Sem garantia de resultado.</span></footer>
@@ -110,16 +110,25 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   try{
    const key=await getApiKey();
    const today=getTodaySaoPaulo();
-   const url='https://v1.basketball.api-sports.io/games?date='+encodeURIComponent(today)+'&timezone=America%2FSao_Paulo';
-   const response=await fetch(url,{headers:{'x-apisports-key':key}});
-   const data=await response.json();
-   if(!response.ok||!Array.isArray(data.response)){
-    const detail=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Resposta inválida da API.';
-    throw new Error('HTTP '+response.status+' • API-Basketball: '+detail);
-   }
-   const games=data.response;
+   const dates=Array.from({length:7},(_,i)=>addDays(today,i));
+   const responses=await Promise.all(dates.map(async date=>{
+    const url='https://v1.basketball.api-sports.io/games?date='+encodeURIComponent(date)+'&timezone=America%2FSao_Paulo';
+    const response=await fetch(url,{headers:{'x-apisports-key':key}});
+    const data=await response.json();
+    if(!response.ok||!Array.isArray(data.response)){
+     const detail=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Resposta inválida da API.';
+     throw new Error('HTTP '+response.status+' • API-Basketball: '+detail);
+    }
+    return data.response;
+   }));
+   const now=Date.now();
+   const games=responses.flat().filter(game=>{
+    const status=String(game.status&&(game.status.short||game.status.long)||'').toUpperCase();
+    const kickoff=Date.parse(game.date||'');
+    return Number.isFinite(kickoff)&&kickoff>now&&['NS','TBD','NOT STARTED','TIME TO BE DEFINED'].includes(status);
+   }).sort((a,b)=>Date.parse(a.date)-Date.parse(b.date));
    if(!games.length){
-    const apiErrors=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Nenhum erro informado pela API.';root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo retornado</h3><p id="basketballDiagnostic"></p><button id="refreshBasketball" class="admin-open">Atualizar</button></div>';root.querySelector('#basketballDiagnostic').textContent='Data consultada: '+today+'. HTTP '+response.status+'. Resultados: '+(data.results??games.length)+'. Detalhe: '+apiErrors;
+    const apiErrors=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Nenhum erro informado pela API.';root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo retornado</h3><p id="basketballDiagnostic"></p><button id="refreshBasketball" class="admin-open">Atualizar</button></div>';root.querySelector('#basketballDiagnostic').textContent='Período consultado: próximos 7 dias a partir de '+today+'. Nenhuma partida futura encontrada.;
     return;
    }
    root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshBasketball" class="admin-open">Atualizar</button></div><div id="basketballGameList" style="display:grid;gap:10px"></div>';
@@ -138,11 +147,11 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
     card.style.cssText='background:#111d31;border:1px solid #263650;border-radius:14px;padding:14px';
     const title=document.createElement('div');
     title.style.cssText='font-size:10px;color:#8fa4c2;margin-bottom:10px';
-    title.textContent=league+(country?' • '+country:'')+' | '+status;
+    title.textContent=league+(country?' • '+country:'')+' | PRÓXIMO JOGO';
     const teams=document.createElement('div');
     teams.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;color:#f2f6ff;font-size:13px;font-weight:700';
     const left=document.createElement('span');left.textContent=home;
-    const score=document.createElement('strong');score.style.cssText='white-space:nowrap;color:#69d6ad';score.textContent=hs+' × '+as;
+    const score=document.createElement('strong');score.style.cssText='white-space:nowrap;color:#69d6ad';score.textContent='VS';
     const right=document.createElement('span');right.style.textAlign='right';right.textContent=away;
     teams.append(left,score,right);
     const time=document.createElement('div');time.style.cssText='font-size:10px;color:#8fa4c2;margin-top:10px';time.textContent=date?formatKickoff(date):'Horário não informado';
@@ -157,7 +166,8 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   if(event.target&&event.target.id==='refreshBasketball')loadBasketballFixtures();
  });
 
- function getTodaySaoPaulo(){const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day;}
+ function addDays(dateString,days){const d=new Date(dateString+'T12:00:00-03:00');d.setDate(d.getDate()+days);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function getTodaySaoPaulo(){const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day;}
  function formatKickoff(value){
   if(!value)return 'Horário não informado';
   return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Sao_Paulo'}).format(new Date(value));
@@ -170,13 +180,15 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
    const key=await getApiKey();
    if(!key){root.innerHTML='<div class="empty"><div class="symbol">🔐</div><h3>Chave bloqueada</h3><p>Abra o painel Admin, informe sua senha no teste de conexão e tente novamente.</p></div>';return;}
    const today=getTodaySaoPaulo();
-   const url='https://v3.football.api-sports.io/fixtures?date='+encodeURIComponent(today)+'&timezone=America%2FSao_Paulo';
-   const response=await fetch(url,{headers:{'x-apisports-key':key}});
+    const endDate=addDays(today,7);
+    const url='https://v3.football.api-sports.io/fixtures?from='+encodeURIComponent(today)+'&to='+encodeURIComponent(endDate)+'&status=NS&timezone=America%2FSao_Paulo';
+    const response=await fetch(url,{headers:{'x-apisports-key':key}});
    const data=await response.json();
    if(!response.ok||!Array.isArray(data.response))throw new Error(data.errors&&Object.keys(data.errors).length?'A API recusou a consulta. Confira a chave e o plano da conta.':'Não foi possível ler a resposta da API.');
-   const games=data.response;
-   if(!games.length){const apiErrors=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Nenhum erro informado pela API.';root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo retornado</h3><p id="footballDiagnostic"></p><button id="refreshFootball" class="admin-open" style="margin-top:12px">Atualizar</button></div>';root.querySelector('#footballDiagnostic').textContent='Data consultada: '+today+'. HTTP '+response.status+'. Resultados: '+(data.results??games.length)+'. Detalhe: '+apiErrors;return;}
-   root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshFootball" class="admin-open">Atualizar</button></div><div id="footballGameList" style="display:grid;gap:10px"></div>';
+   const now=Date.now();
+    const games=data.response.filter(game=>game.fixture&&game.fixture.status&&['NS','TBD'].includes(game.fixture.status.short)&&Date.parse(game.fixture.date)>now).sort((a,b)=>Date.parse(a.fixture.date)-Date.parse(b.fixture.date));
+    if(!games.length){root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo futuro encontrado</h3><p>Não há partidas ainda não iniciadas nos próximos 7 dias. Atualize mais tarde.</p><button id="refreshFootball" class="admin-open" style="margin-top:12px">Atualizar</button></div>';return;}
+    root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshFootball" class="admin-open">Atualizar</button></div><div id="footballGameList" style="display:grid;gap:10px"></div>';
    const list=document.getElementById('footballGameList');
    games.forEach((game,index)=>{
     const home=game.teams&&game.teams.home?game.teams.home.name:'Mandante';
@@ -190,7 +202,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
     card.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;color:#8fa4c4;font-size:9px;margin-bottom:9px"><span></span><span></span></div><div style="font:600 13px Space Grotesk;margin-bottom:7px"></div><div style="font-size:10px;color:#9aabc5"></div>';
     const meta=card.children[0].children;meta[0].textContent=league+(country?' • '+country:'');meta[1].textContent=formatKickoff(game.fixture&&game.fixture.date);
     card.children[1].textContent=home+'  ×  '+away;
-    card.children[2].textContent=status+(status==='Not Started'?'':' • Placar: '+score);
+    card.children[2].textContent='AINDA NÃO INICIADA';
     card.addEventListener('click',()=>showFixtureDetails(game));
     list.appendChild(card);
    });
