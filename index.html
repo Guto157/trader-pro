@@ -100,9 +100,6 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   return String.fromCharCode(...chars);
  }
  async function getApiKey(){
-  if(activeApiKey)return activeApiKey;
-  const plain=localStorage.getItem('traderpro_apifootball_key_runtime');
-  if(plain){activeApiKey=plain;return plain;}
   activeApiKey=getBuiltInApiKey();
   return activeApiKey;
  }
