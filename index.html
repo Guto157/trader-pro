@@ -87,13 +87,14 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   const toBase64=bytes=>btoa(String.fromCharCode(...bytes));
   return JSON.stringify({version:1,salt:toBase64(salt),iv:toBase64(iv),ciphertext:toBase64(new Uint8Array(encrypted))});
  }
- let activeApiKey='';
+ let activeApiKey=sessionStorage.getItem('traderpro_unlocked_apifootball_key')||'';
  async function getApiKey(){
   if(activeApiKey)return activeApiKey;
   const password=window.prompt('Digite sua senha para desbloquear a chave API-Football:');
   if(password===null)return '';
   const key=await decryptApiKey(password);
   activeApiKey=key;
+  sessionStorage.setItem('traderpro_unlocked_apifootball_key',key);
   return key;
  }
  function formatKickoff(value){
@@ -179,7 +180,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   }catch(e){keyStatus.textContent=e.message||'Não foi possível criptografar a chave.';keyStatus.style.color='#ffb86b';}
  });
  document.getElementById('removeApiKey').addEventListener('click',()=>{
-  localStorage.removeItem(KEY_NAME);legacyPlainKey='';keyInput.value='';passwordInput.value='';
+  localStorage.removeItem(KEY_NAME);sessionStorage.removeItem('traderpro_unlocked_apifootball_key');activeApiKey='';legacyPlainKey='';keyInput.value='';passwordInput.value='';
   keyStatus.textContent='Chave apagada deste navegador.';keyStatus.style.color='#9aabc5';
  });
  document.getElementById('testApiKey').addEventListener('click',async()=>{
@@ -189,6 +190,8 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
    catch(e){keyStatus.textContent=e.message;keyStatus.style.color='#ffb86b';return;}
   }
   if(!key){keyStatus.textContent='Informe a chave API ou salve uma chave criptografada.';keyStatus.style.color='#ffb86b';return;}
+  activeApiKey=key;
+  sessionStorage.setItem('traderpro_unlocked_apifootball_key',key);
   keyStatus.textContent='Testando a conexão...';keyStatus.style.color='#9aabc5';
   try{
    const response=await fetch('https://v3.football.api-sports.io/status',{headers:{'x-apisports-key':key}});
