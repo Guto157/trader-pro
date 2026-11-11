@@ -88,20 +88,17 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   return JSON.stringify({version:1,salt:toBase64(salt),iv:toBase64(iv),ciphertext:toBase64(new Uint8Array(encrypted))});
  }
  let activeApiKey=sessionStorage.getItem('traderpro_unlocked_apifootball_key')||'';
+ // Chave padrão ofuscada em blocos. Isso dificulta a leitura casual, mas não substitui um backend.
+ function getBuiltInApiKey(){
+  const fragments=['Y2Y=','YjBjOWYw','ZWMyODM5','MTY0ZGM4','OWZjNTMz','NjdkNjgy'];
+  return atob(fragments.reverse().join(''));
+ }
  async function getApiKey(){
   if(activeApiKey)return activeApiKey;
   const plain=localStorage.getItem('traderpro_apifootball_key_runtime');
   if(plain){activeApiKey=plain;return plain;}
-  const encrypted=localStorage.getItem(KEY_NAME);
-  if(!encrypted)return '';
-  let record;try{record=JSON.parse(encrypted);}catch(e){return encrypted;}
-  if(!record||record.version!==1||!record.ciphertext)return encrypted;
-  const password=window.prompt('Para ativar o uso automático da API neste aparelho, digite sua senha uma única vez:');
-  if(password===null)return '';
-  const key=await decryptApiKey(password);
-  localStorage.setItem('traderpro_apifootball_key_runtime',key);
-  activeApiKey=key;
-  return key;
+  activeApiKey=getBuiltInApiKey();
+  return activeApiKey;
  }
  function formatKickoff(value){
   if(!value)return 'Horário não informado';
