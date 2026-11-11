@@ -106,17 +106,32 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   return activeApiKey;
  }
  let selectedFootballLeague=null,selectedBasketballLeague=null;
+ const normalizeLeagueText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+ function isTopLeague(league,sport){
+  const name=normalizeLeagueText(league.name),country=normalizeLeagueText(league.country);
+  if(sport==='football'){
+   const exact=[
+    ['premier league','england'],['la liga','spain'],['bundesliga','germany'],['serie a','italy'],['ligue 1','france'],
+    ['eredivisie','netherlands'],['primeira liga','portugal'],['champions league',''],['europa league',''],['conference league',''],
+    ['copa libertadores',''],['copa sudamericana',''],['serie a','brazil'],['liga profesional','argentina'],
+    ['major league soccer',''],['mls',''],['liga mx','mexico'],['saudi pro league','saudi arabia']
+   ];
+   return exact.some(([n,c])=>name===n&&(!c||country.includes(c)));
+  }
+  const allowed=['nba','wnba','euroleague','eurocup','basketball champions league','acb','liga acb','lnb','pro a','bsl','basketbol super ligi','nbb','novo basquete brasil','cba','nbl'];
+  return allowed.includes(name)||allowed.some(n=>name.startsWith(n+' '));
+ }
  async function loadFootballLeagues(){
   const root=document.getElementById('footballLeagueList');if(!root)return;root.innerHTML='<div class="empty"><h3>Buscando competições...</h3></div>';
   try{const key=await getApiKey();const response=await fetch('https://v3.football.api-sports.io/leagues?current=true',{headers:{'x-apisports-key':key}});const data=await response.json();if(!response.ok||!Array.isArray(data.response))throw new Error('A API-Football não retornou as competições.');
-   const leagues=data.response.map(item=>({id:item.league.id,name:item.league.name,country:item.country&&item.country.name||'Internacional',season:(item.seasons||[]).filter(s=>s.current).map(s=>s.year).sort((a,b)=>b-a)[0]||(item.seasons||[]).map(s=>s.year).sort((a,b)=>b-a)[0]})).filter(x=>x.id&&x.season).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
+   const leagues=data.response.map(item=>({id:item.league.id,name:item.league.name,country:item.country&&item.country.name||'Internacional',season:(item.seasons||[]).filter(s=>s.current).map(s=>s.year).sort((a,b)=>b-a)[0]||(item.seasons||[]).map(s=>s.year).sort((a,b)=>b-a)[0]})).filter(x=>x.id&&x.season&&isTopLeague(x,'football')).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
    renderLeagueButtons(root,leagues,'football');
   }catch(e){root.innerHTML='<div class="empty"><h3>Não foi possível carregar as ligas</h3><p></p><button id="retryFootballLeagues" class="admin-open">Tentar novamente</button></div>';root.querySelector('p').textContent=e.message;root.querySelector('#retryFootballLeagues').onclick=loadFootballLeagues;}
  }
  async function loadBasketballLeagues(){
   const root=document.getElementById('basketballLeagueList');if(!root)return;root.innerHTML='<div class="empty"><h3>Buscando competições...</h3></div>';
   try{const key=await getApiKey();const response=await fetch('https://v1.basketball.api-sports.io/leagues',{headers:{'x-apisports-key':key}});const data=await response.json();if(!response.ok||!Array.isArray(data.response))throw new Error('A API-Basketball não retornou as competições.');
-   const leagues=data.response.map(item=>({id:item.id||item.league&&item.league.id,name:item.name||item.league&&item.league.name,country:item.country&&item.country.name||item.country||'Internacional'})).filter(x=>x.id&&x.name).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
+   const leagues=data.response.map(item=>({id:item.id||item.league&&item.league.id,name:item.name||item.league&&item.league.name,country:item.country&&item.country.name||item.country||'Internacional'})).filter(x=>x.id&&x.name&&isTopLeague(x,'basketball')).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
    renderLeagueButtons(root,leagues,'basketball');
   }catch(e){root.innerHTML='<div class="empty"><h3>Não foi possível carregar as ligas</h3><p></p><button id="retryBasketballLeagues" class="admin-open">Tentar novamente</button></div>';root.querySelector('p').textContent=e.message;root.querySelector('#retryBasketballLeagues').onclick=loadBasketballLeagues;}
  }
