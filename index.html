@@ -128,7 +128,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
     return Number.isFinite(kickoff)&&kickoff>now&&['NS','TBD','NOT STARTED','TIME TO BE DEFINED'].includes(status);
    }).sort((a,b)=>Date.parse(a.date)-Date.parse(b.date));
    if(!games.length){
-    const apiErrors=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Nenhum erro informado pela API.';root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo retornado</h3><p id="basketballDiagnostic"></p><button id="refreshBasketball" class="admin-open">Atualizar</button></div>';root.querySelector('#basketballDiagnostic').textContent='Período consultado: próximos 7 dias a partir de '+today+'. Nenhuma partida futura encontrada.;
+    root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo retornado</h3><p id="basketballDiagnostic"></p><button id="refreshBasketball" class="admin-open">Atualizar</button></div>';root.querySelector('#basketballDiagnostic').textContent='Período consultado: próximos 7 dias a partir de '+today+'. Nenhuma partida futura encontrada.';
     return;
    }
    root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshBasketball" class="admin-open">Atualizar</button></div><div id="basketballGameList" style="display:grid;gap:10px"></div>';
