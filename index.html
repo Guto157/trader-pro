@@ -30,8 +30,8 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 </div></section>
 <section id="football" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">⚽ Futebol</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="leaguesFootball"><span>🏆</span>Escolher liga</button><button class="option" data-open="analysisFootball"><span>📊</span>Analisar partida</button></div></section>
 <section id="basketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">🏀 Basquete</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="leaguesBasketball"><span>🏆</span>Escolher liga</button><button class="option" data-open="analysisBasketball"><span>📊</span>Analisar partida</button></div></section>
-<section id="leaguesFootball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">FUTEBOL</div><h1 class="view-title">Escolha a liga</h1><p class="view-sub">Selecione uma competição para ver os próximos jogos.</p><input id="footballLeagueSearch" type="search" placeholder="Buscar liga ou país..." style="width:100%;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;margin-bottom:12px"><div id="footballLeagueList" style="display:grid;gap:9px"><div class="empty"><h3>Carregando competições...</h3></div></div></section>
-<section id="leaguesBasketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">BASQUETE</div><h1 class="view-title">Escolha a liga</h1><p class="view-sub">Selecione uma competição para ver os próximos jogos.</p><input id="basketballLeagueSearch" type="search" placeholder="Buscar liga ou país..." style="width:100%;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;margin-bottom:12px"><div id="basketballLeagueList" style="display:grid;gap:9px"><div class="empty"><h3>Carregando competições...</h3></div></div></section>
+<section id="leaguesFootball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">FUTEBOL</div><h1 class="view-title">Escolha a liga</h1><p class="view-sub">Ligas principais pré-selecionadas. Pesquise para encontrar qualquer outra competição disponível na API.</p><input id="footballLeagueSearch" type="search" placeholder="Buscar liga ou país..." style="width:100%;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;margin-bottom:12px"><div id="footballLeagueList" style="display:grid;gap:9px"><div class="empty"><h3>Carregando competições...</h3></div></div></section>
+<section id="leaguesBasketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">BASQUETE</div><h1 class="view-title">Escolha a liga</h1><p class="view-sub">NBA pré-selecionada. Pesquise para encontrar outras competições disponíveis na API.</p><input id="basketballLeagueSearch" type="search" placeholder="Buscar liga ou país..." style="width:100%;background:#0b1424;border:1px solid #344765;border-radius:9px;padding:12px;color:#eef3ff;margin-bottom:12px"><div id="basketballLeagueList" style="display:grid;gap:9px"><div class="empty"><h3>Carregando competições...</h3></div></div></section>
 <section id="matchesFootball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de futebol</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="footballMatches"><div class="empty"><div class="symbol">⚽</div><h3>Carregando partidas...</h3><p>Consultando a agenda oficial da API-Football.</p></div></div></section>
 <section id="matchesBasketball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de basquete</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="basketballMatches"><div class="empty"><div class="symbol">🏀</div><h3>Carregando partidas...</h3><p>Consultando a API-Basketball.</p></div></div></section>
 
@@ -107,36 +107,68 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
  }
  let selectedFootballLeague=null,selectedBasketballLeague=null;
  const normalizeLeagueText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
- function isTopLeague(league,sport){
+ function isFeaturedFootballLeague(league){
   const name=normalizeLeagueText(league.name),country=normalizeLeagueText(league.country);
-  if(sport==='football'){
-   const exact=[
-    ['premier league','england'],['la liga','spain'],['bundesliga','germany'],['serie a','italy'],['ligue 1','france'],
-    ['champions league',''],['copa libertadores',''],['serie a','brazil']
-   ];
-   return exact.some(([n,c])=>name===n&&(!c||country.includes(c)));
-  }
-  const allowed=['nba','euroleague','nbb','novo basquete brasil'];
-  return allowed.includes(name)||allowed.some(n=>name.startsWith(n+' '));
+  const featured={
+   germany:['bundesliga'],
+   belgium:['pro league','jupiler pro league'],
+   denmark:['superliga'],
+   scotland:['premiership'],
+   spain:['la liga'],
+   france:['ligue 1'],
+   italy:['serie a'],
+   england:['premier league'],
+   norway:['eliteserien'],
+   portugal:['primeira liga','liga portugal'],
+   'saudi arabia':['pro league','saudi pro league'],
+   turkey:['super lig'],
+   ukraine:['premier league']
+  };
+  return (featured[country]||[]).some(n=>name===n||name.startsWith(n+' '));
+ }
+ function isFeaturedBasketballLeague(league){
+  return normalizeLeagueText(league.name)==='nba';
  }
  async function loadFootballLeagues(){
   const root=document.getElementById('footballLeagueList');if(!root)return;root.innerHTML='<div class="empty"><h3>Buscando competições...</h3></div>';
   try{const key=await getApiKey();const response=await fetch('https://v3.football.api-sports.io/leagues?current=true',{headers:{'x-apisports-key':key}});const data=await response.json();if(!response.ok||!Array.isArray(data.response))throw new Error('A API-Football não retornou as competições.');
-   const leagues=data.response.map(item=>({id:item.league.id,name:item.league.name,country:item.country&&item.country.name||'Internacional',season:(item.seasons||[]).filter(s=>s.current).map(s=>s.year).sort((a,b)=>b-a)[0]||(item.seasons||[]).map(s=>s.year).sort((a,b)=>b-a)[0]})).filter(x=>x.id&&x.season&&isTopLeague(x,'football')).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
+   const leagues=data.response.map(item=>({id:item.league.id,name:item.league.name,country:item.country&&item.country.name||'Internacional',season:(item.seasons||[]).filter(s=>s.current).map(s=>s.year).sort((a,b)=>b-a)[0]||(item.seasons||[]).map(s=>s.year).sort((a,b)=>b-a)[0]})).filter(x=>x.id&&x.season).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
    renderLeagueButtons(root,leagues,'football');
   }catch(e){root.innerHTML='<div class="empty"><h3>Não foi possível carregar as ligas</h3><p></p><button id="retryFootballLeagues" class="admin-open">Tentar novamente</button></div>';root.querySelector('p').textContent=e.message;root.querySelector('#retryFootballLeagues').onclick=loadFootballLeagues;}
  }
  async function loadBasketballLeagues(){
   const root=document.getElementById('basketballLeagueList');if(!root)return;root.innerHTML='<div class="empty"><h3>Buscando competições...</h3></div>';
   try{const key=await getApiKey();const response=await fetch('https://v1.basketball.api-sports.io/leagues',{headers:{'x-apisports-key':key}});const data=await response.json();if(!response.ok||!Array.isArray(data.response))throw new Error('A API-Basketball não retornou as competições.');
-   const leagues=data.response.map(item=>({id:item.id||item.league&&item.league.id,name:item.name||item.league&&item.league.name,country:item.country&&item.country.name||item.country||'Internacional'})).filter(x=>x.id&&x.name&&isTopLeague(x,'basketball')).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
+   const leagues=data.response.map(item=>({id:item.id||item.league&&item.league.id,name:item.name||item.league&&item.league.name,country:item.country&&item.country.name||item.country||'Internacional'})).filter(x=>x.id&&x.name).sort((a,b)=>a.country.localeCompare(b.country)||a.name.localeCompare(b.name));
    renderLeagueButtons(root,leagues,'basketball');
   }catch(e){root.innerHTML='<div class="empty"><h3>Não foi possível carregar as ligas</h3><p></p><button id="retryBasketballLeagues" class="admin-open">Tentar novamente</button></div>';root.querySelector('p').textContent=e.message;root.querySelector('#retryBasketballLeagues').onclick=loadBasketballLeagues;}
  }
  function renderLeagueButtons(root,leagues,sport){
   const search=document.getElementById(sport+'LeagueSearch');
-  function draw(){const q=(search.value||'').trim().toLocaleLowerCase('pt-BR');const filtered=leagues.filter(l=>(l.name+' '+l.country).toLocaleLowerCase('pt-BR').includes(q)).slice(0,100);root.innerHTML='';if(!filtered.length){root.innerHTML='<div class="empty"><h3>Nenhuma liga encontrada</h3><p>Tente outro nome.</p></div>';return;}filtered.forEach(league=>{const b=document.createElement('button');b.type='button';b.className='option';b.style.cssText='width:100%;padding:14px;text-align:left';b.textContent=league.name+' • '+league.country;b.addEventListener('click',()=>{if(sport==='football')selectedFootballLeague=league;else selectedBasketballLeague=league;openView(sport==='football'?'matchesFootball':'matchesBasketball');});root.appendChild(b);});}
-  search.value='';search.oninput=draw;draw();
+  function draw(){
+   const q=normalizeLeagueText(search.value||'');
+   const featured=league=>sport==='football'?isFeaturedFootballLeague(league):isFeaturedBasketballLeague(league);
+   const filtered=(q?leagues.filter(l=>normalizeLeagueText(l.name+' '+l.country).includes(q)):leagues.filter(featured)).slice(0,100);
+   root.innerHTML='';
+   if(!filtered.length){
+    root.innerHTML='<div class="empty"><h3>Nenhuma liga encontrada</h3><p>A busca consulta todas as competições disponíveis na API. Tente outro nome.</p></div>';
+    return;
+   }
+   filtered.forEach(league=>{
+    const button=document.createElement('button');
+    button.type='button';button.className='option';button.style.cssText='width:100%;padding:14px;text-align:left';
+    button.textContent=league.name+' • '+league.country;
+    button.addEventListener('click',()=>{
+     if(sport==='football')selectedFootballLeague=league;else selectedBasketballLeague=league;
+     openView(sport==='football'?'matchesFootball':'matchesBasketball');
+    });
+    root.appendChild(button);
+   });
+  }
+  search.value='';
+  search.placeholder=sport==='football'?'Buscar qualquer liga ou país...':'Buscar NBA ou outra competição...';
+  search.oninput=draw;
+  draw();
  }
  async function loadBasketballFixtures(){
   const root=document.getElementById('basketballMatches');
