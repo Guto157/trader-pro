@@ -30,7 +30,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 </div></section>
 <section id="football" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">⚽ Futebol</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="matchesFootball"><span>📅</span>Jogos do dia</button><button class="option" data-open="analysisFootball"><span>📊</span>Analisar partida</button></div></section>
 <section id="basketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">🏀 Basquete</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="matchesBasketball"><span>📅</span>Jogos do dia</button><button class="option" data-open="analysisBasketball"><span>📊</span>Analisar partida</button></div></section>
-<section id="matchesFootball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de futebol</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div class="empty"><div class="symbol">⚽</div><h3>Fonte de partidas não conectada</h3><p>Os jogos serão exibidos aqui quando a integração de dados estiver ativa. Nenhuma partida será inventada.</p></div></section>
+<section id="matchesFootball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de futebol</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="footballMatches"><div class="empty"><div class="symbol">⚽</div><h3>Carregando partidas...</h3><p>Consultando a agenda oficial da API-Football.</p></div></div></section>
 <section id="matchesBasketball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de basquete</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div class="empty"><div class="symbol">🏀</div><h3>Fonte de partidas não conectada</h3><p>Os jogos serão exibidos aqui quando a integração de dados estiver ativa. Nenhuma partida será inventada.</p></div></section>
 
 <section id="analysisFootball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ANÁLISE DE FUTEBOL</div><h1 class="view-title">Analisar partida</h1><p class="view-sub">Área de análise de futebol.</p><div class="empty"><div class="symbol">📊</div><h3>Dados de partidas ainda não conectados</h3><p>Assim que a fonte de jogos, estatísticas e odds estiver integrada, você poderá selecionar uma partida e receber a análise dos mercados. Não vamos exibir palpites ou números sem dados verificados.</p></div></section>
@@ -42,7 +42,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 <script>
 (() => {
  const views=[...document.querySelectorAll('.view')];let current='home';const history=[];
- function openView(id){const target=document.getElementById(id);if(!target)return;history.push(current);current=id;views.forEach(v=>v.classList.toggle('active',v===target));window.scrollTo({top:0,behavior:'instant'});}
+ function openView(id){const target=document.getElementById(id);if(!target)return;history.push(current);current=id;views.forEach(v=>v.classList.toggle('active',v===target));window.scrollTo({top:0,behavior:'instant'});if(id==='matchesFootball')loadFootballFixtures();}
  function back(){current=history.pop()||'home';views.forEach(v=>v.classList.toggle('active',v.id===current));window.scrollTo({top:0,behavior:'instant'});}
  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openView(b.dataset.open)));
  document.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',back));
@@ -86,6 +86,66 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   const encrypted=await crypto.subtle.encrypt({name:'AES-GCM',iv},cryptoKey,encoder.encode(value));
   const toBase64=bytes=>btoa(String.fromCharCode(...bytes));
   return JSON.stringify({version:1,salt:toBase64(salt),iv:toBase64(iv),ciphertext:toBase64(new Uint8Array(encrypted))});
+ }
+ let activeApiKey='';
+ async function getApiKey(){
+  if(activeApiKey)return activeApiKey;
+  const password=window.prompt('Digite sua senha para desbloquear a chave API-Football:');
+  if(password===null)return '';
+  const key=await decryptApiKey(password);
+  activeApiKey=key;
+  return key;
+ }
+ function formatKickoff(value){
+  if(!value)return 'Horário não informado';
+  return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Sao_Paulo'}).format(new Date(value));
+ }
+ async function loadFootballFixtures(){
+  const root=document.getElementById('footballMatches');
+  if(!root)return;
+  root.innerHTML='<div class="empty"><div class="symbol">⏳</div><h3>Buscando jogos...</h3><p>Consultando a API-Football.</p></div>';
+  try{
+   const key=await getApiKey();
+   if(!key){root.innerHTML='<div class="empty"><div class="symbol">🔐</div><h3>Chave bloqueada</h3><p>Abra o painel Admin, informe sua senha no teste de conexão e tente novamente.</p></div>';return;}
+   const today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+   const url='https://v3.football.api-sports.io/fixtures?date='+encodeURIComponent(today)+'&timezone=America%2FSao_Paulo';
+   const response=await fetch(url,{headers:{'x-apisports-key':key}});
+   const data=await response.json();
+   if(!response.ok||!Array.isArray(data.response))throw new Error(data.errors&&Object.keys(data.errors).length?'A API recusou a consulta. Confira a chave e o plano da conta.':'Não foi possível ler a resposta da API.');
+   const games=data.response;
+   if(!games.length){root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo encontrado hoje</h3><p>A API-Football não retornou partidas para '+today+'.</p></div>';return;}
+   root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshFootball" class="admin-open">Atualizar</button></div><div id="footballGameList" style="display:grid;gap:10px"></div>';
+   const list=document.getElementById('footballGameList');
+   games.forEach((game,index)=>{
+    const home=game.teams&&game.teams.home?game.teams.home.name:'Mandante';
+    const away=game.teams&&game.teams.away?game.teams.away.name:'Visitante';
+    const league=game.league&&game.league.name?game.league.name:'Competição';
+    const country=game.league&&game.league.country?game.league.country:'';
+    const status=game.fixture&&game.fixture.status?game.fixture.status.long:'Agendado';
+    const score=game.goals?(game.goals.home??'-')+' × '+(game.goals.away??'-'):'- × -';
+    const card=document.createElement('button');
+    card.type='button';card.className='option';card.style.cssText='width:100%;display:block;text-align:left;padding:15px';
+    card.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;color:#8fa4c4;font-size:9px;margin-bottom:9px"><span></span><span></span></div><div style="font:600 13px Space Grotesk;margin-bottom:7px"></div><div style="font-size:10px;color:#9aabc5"></div>';
+    const meta=card.children[0].children;meta[0].textContent=league+(country?' • '+country:'');meta[1].textContent=formatKickoff(game.fixture&&game.fixture.date);
+    card.children[1].textContent=home+'  ×  '+away;
+    card.children[2].textContent=status+(status==='Not Started'?'':' • Placar: '+score);
+    card.addEventListener('click',()=>showFixtureDetails(game));
+    list.appendChild(card);
+   });
+   document.getElementById('refreshFootball').addEventListener('click',loadFootballFixtures);
+  }catch(error){
+   root.innerHTML='<div class="empty"><div class="symbol">⚠️</div><h3>Não foi possível carregar os jogos</h3><p>'+String(error.message||error).replace(/[<>]/g,'')+'</p><button id="retryFootball" class="admin-open" style="margin-top:14px">Tentar novamente</button></div>';
+   const retry=document.getElementById('retryFootball');if(retry)retry.addEventListener('click',loadFootballFixtures);
+  }
+ }
+ function showFixtureDetails(game){
+  const root=document.getElementById('footballMatches');
+  const home=game.teams.home.name,away=game.teams.away.name;
+  const league=game.league.name+' • '+game.league.country;
+  const date=formatKickoff(game.fixture.date);
+  const status=game.fixture.status.long;
+  root.innerHTML='<button id="backToFootballGames" class="back">← Voltar aos jogos</button><div class="eyebrow">DETALHES DA PARTIDA</div><h2 class="view-title">'+home+' × '+away+'</h2><p class="view-sub">'+league+'<br>'+date+' • '+status+'</p><div class="empty"><div class="symbol">📊</div><h3>Partida identificada pela API</h3><p>Próxima etapa: carregar estatísticas, escalações oficiais e dados dos mercados. Nenhuma entrada será sugerida antes de validar esses dados.</p></div>';
+  document.getElementById('backToFootballGames').addEventListener('click',loadFootballFixtures);
  }
  async function decryptApiKey(password){
   const raw=localStorage.getItem(KEY_NAME);
