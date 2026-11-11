@@ -31,7 +31,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 <section id="football" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">⚽ Futebol</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="matchesFootball"><span>📅</span>Jogos do dia</button><button class="option" data-open="analysisFootball"><span>📊</span>Analisar partida</button></div></section>
 <section id="basketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ESPORTE</div><h1 class="view-title">🏀 Basquete</h1><p class="view-sub">Selecione o que deseja consultar.</p><div class="sport-options"><button class="option" data-open="matchesBasketball"><span>📅</span>Jogos do dia</button><button class="option" data-open="analysisBasketball"><span>📊</span>Analisar partida</button></div></section>
 <section id="matchesFootball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de futebol</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="footballMatches"><div class="empty"><div class="symbol">⚽</div><h3>Carregando partidas...</h3><p>Consultando a agenda oficial da API-Football.</p></div></div></section>
-<section id="matchesBasketball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de basquete</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div class="empty"><div class="symbol">🏀</div><h3>Fonte de partidas não conectada</h3><p>Os jogos serão exibidos aqui quando a integração de dados estiver ativa. Nenhuma partida será inventada.</p></div></section>
+<section id="matchesBasketball" class="view"><button class="back" data-back>← Voltar</button><h1 class="view-title">Jogos de basquete</h1><p class="view-sub">Agenda e partidas disponíveis.</p><div id="basketballMatches"><div class="empty"><div class="symbol">🏀</div><h3>Carregando partidas...</h3><p>Consultando a API-Basketball.</p></div></div></section>
 
 <section id="analysisFootball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ANÁLISE DE FUTEBOL</div><h1 class="view-title">Analisar partida</h1><p class="view-sub">Área de análise de futebol.</p><div class="empty"><div class="symbol">📊</div><h3>Dados de partidas ainda não conectados</h3><p>Assim que a fonte de jogos, estatísticas e odds estiver integrada, você poderá selecionar uma partida e receber a análise dos mercados. Não vamos exibir palpites ou números sem dados verificados.</p></div></section>
 <section id="analysisBasketball" class="view"><button class="back" data-back>← Voltar</button><div class="eyebrow">ANÁLISE DE BASQUETE</div><h1 class="view-title">Analisar partida</h1><p class="view-sub">Área de análise de basquete.</p><div class="empty"><div class="symbol">📊</div><h3>Dados de partidas ainda não conectados</h3><p>Assim que a fonte de jogos, estatísticas e odds estiver integrada, você poderá selecionar uma partida e receber a análise dos mercados. Não vamos exibir palpites ou números sem dados verificados.</p></div></section>
@@ -42,7 +42,7 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
 <script>
 (() => {
  const views=[...document.querySelectorAll('.view')];let current='home';const history=[];
- function openView(id){const target=document.getElementById(id);if(!target)return;history.push(current);current=id;views.forEach(v=>v.classList.toggle('active',v===target));window.scrollTo({top:0,behavior:'instant'});if(id==='matchesFootball')loadFootballFixtures();}
+ function openView(id){const target=document.getElementById(id);if(!target)return;history.push(current);current=id;views.forEach(v=>v.classList.toggle('active',v===target));window.scrollTo({top:0,behavior:'instant'});if(id==='matchesFootball')loadFootballFixtures();if(id==='matchesBasketball')loadBasketballFixtures();}
  function back(){current=history.pop()||'home';views.forEach(v=>v.classList.toggle('active',v.id===current));window.scrollTo({top:0,behavior:'instant'});}
  document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openView(b.dataset.open)));
  document.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',back));
@@ -106,6 +106,60 @@ footer{border-top:1px solid #1e2b42;padding-top:15px;display:flex;justify-conten
   activeApiKey=getBuiltInApiKey();
   return activeApiKey;
  }
+ async function loadBasketballFixtures(){
+  const root=document.getElementById('basketballMatches');
+  if(!root)return;
+  root.innerHTML='<div class="empty"><div class="symbol">⏳</div><h3>Buscando jogos...</h3><p>Consultando a API-Basketball.</p></div>';
+  try{
+   const key=await getApiKey();
+   const today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+   const url='https://v1.basketball.api-sports.io/games?date='+encodeURIComponent(today)+'&timezone=America%2FSao_Paulo';
+   const response=await fetch(url,{headers:{'x-apisports-key':key}});
+   const data=await response.json();
+   if(!response.ok||!Array.isArray(data.response)){
+    const detail=data.errors&&Object.keys(data.errors).length?JSON.stringify(data.errors):'Resposta inválida da API.';
+    throw new Error('A API-Basketball não liberou a consulta. Verifique se o produto Basquete está habilitado na sua conta API-Sports. '+detail);
+   }
+   const games=data.response;
+   if(!games.length){
+    root.innerHTML='<div class="empty"><div class="symbol">📅</div><h3>Nenhum jogo encontrado hoje</h3><p>A API-Basketball não retornou partidas para '+today+'.</p><button id="refreshBasketball" class="admin-open">Atualizar</button></div>';
+    return;
+   }
+   root.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;color:#9aabc5;font-size:10px"><span>'+games.length+' partidas encontradas</span><button id="refreshBasketball" class="admin-open">Atualizar</button></div><div id="basketballGameList" style="display:grid;gap:10px"></div>';
+   const list=document.getElementById('basketballGameList');
+   games.forEach(game=>{
+    const home=game.teams&&game.teams.home?game.teams.home.name:'Mandante';
+    const away=game.teams&&game.teams.away?game.teams.away.name:'Visitante';
+    const league=game.league&&game.league.name?game.league.name:'Competição';
+    const country=game.country&&game.country.name?game.country.name:'';
+    const status=game.status&&(game.status.long||game.status.short)?(game.status.long||game.status.short):'Agendado';
+    const hs=game.scores&&game.scores.home&&game.scores.home.total!=null?game.scores.home.total:'-';
+    const as=game.scores&&game.scores.away&&game.scores.away.total!=null?game.scores.away.total:'-';
+    const date=game.date||game.time||'';
+    const card=document.createElement('article');
+    card.className='match-card';
+    card.style.cssText='background:#111d31;border:1px solid #263650;border-radius:14px;padding:14px';
+    const title=document.createElement('div');
+    title.style.cssText='font-size:10px;color:#8fa4c2;margin-bottom:10px';
+    title.textContent=league+(country?' • '+country:'')+' | '+status;
+    const teams=document.createElement('div');
+    teams.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;color:#f2f6ff;font-size:13px;font-weight:700';
+    const left=document.createElement('span');left.textContent=home;
+    const score=document.createElement('strong');score.style.cssText='white-space:nowrap;color:#69d6ad';score.textContent=hs+' × '+as;
+    const right=document.createElement('span');right.style.textAlign='right';right.textContent=away;
+    teams.append(left,score,right);
+    const time=document.createElement('div');time.style.cssText='font-size:10px;color:#8fa4c2;margin-top:10px';time.textContent=date?formatKickoff(date):'Horário não informado';
+    card.append(title,teams,time);list.appendChild(card);
+   });
+  }catch(error){
+   root.innerHTML='<div class="empty"><div class="symbol">⚠️</div><h3>Não foi possível carregar o basquete</h3><p></p><button id="refreshBasketball" class="admin-open">Tentar novamente</button></div>';
+   root.querySelector('p').textContent=error.message||'Erro na consulta.';
+  }
+ }
+ document.addEventListener('click',event=>{
+  if(event.target&&event.target.id==='refreshBasketball')loadBasketballFixtures();
+ });
+
  function formatKickoff(value){
   if(!value)return 'Horário não informado';
   return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Sao_Paulo'}).format(new Date(value));
