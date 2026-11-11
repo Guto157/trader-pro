@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="TRADER PRO. Central de análise esportiva e oportunidades de mercado.">
+  <title>TRADER PRO | Sports Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="TRADER PRO início">
+        <span class="brand-mark">T<span>•</span></span>
+        <span class="brand-name">TRADER<span>PRO</span><small>SPORTS INTELLIGENCE</small></span>
+      </a>
+      <div class="side-label">WORKSPACE</div>
+      <nav class="main-nav" aria-label="Navegação principal">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">▦</span> Visão geral</button>
+        <button class="nav-item" data-view="matches"><span class="nav-icon">◷</span> Jogos</button>
+        <button class="nav-item" data-view="analysis"><span class="nav-icon">⌁</span> Análises</button>
+        <button class="nav-item" data-view="history"><span class="nav-icon">▤</span> Histórico</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="status-card"><span class="status-dot"></span><div><strong>Central de dados</strong><small>Preparada para integração</small></div></div>
+        <div class="profile"><div class="avatar">TP</div><div><strong>Trader Pro</strong><small>Conta pessoal</small></div><span class="profile-more">•••</span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menu">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="breadcrumbPage">Visão geral</strong></div>
+        <div class="top-actions"><span class="live-indicator"><i></i> SISTEMA ONLINE</span><button class="icon-button" aria-label="Notificações">♧</button><div class="top-avatar">TP</div></div>
+      </header>
+
+      <section class="page-content">
+        <div class="welcome-row">
+          <div><div class="eyebrow">SEGUNDA-FEIRA, 10 DE NOVEMBRO</div><h1 id="pageTitle">Visão geral</h1><p class="subtitle">Inteligência de mercado para decisões mais bem fundamentadas.</p></div>
+          <button class="date-button" id="dateButton"><span>▦</span> <span id="todayLabel">Hoje</span> <b>⌄</b></button>
+        </div>
+
+        <section class="sport-switch" aria-label="Selecionar esporte">
+          <button class="sport-tab selected" data-sport="football"><span class="sport-symbol">⚽</span> Futebol</button>
+          <button class="sport-tab" data-sport="basketball"><span class="sport-symbol">🏀</span> Basquete</button>
+          <span class="sport-note">SELECIONE O ESPORTE</span>
+        </section>
+
+        <section class="metric-grid">
+          <article class="metric-card"><div class="metric-head"><span>JOGOS DISPONÍVEIS</span><span class="metric-icon blue">▦</span></div><div class="metric-value" id="matchCount">—</div><div class="metric-foot">Aguardando fonte de partidas</div></article>
+          <article class="metric-card"><div class="metric-head"><span>ANÁLISES GERADAS</span><span class="metric-icon purple">⌁</span></div><div class="metric-value">—</div><div class="metric-foot">Nenhuma análise registrada</div></article>
+          <article class="metric-card"><div class="metric-head"><span>ENTRADAS VALIDADAS</span><span class="metric-icon green">↗</span></div><div class="metric-value">—</div><div class="metric-foot">Sem recomendações publicadas</div></article>
+          <article class="metric-card"><div class="metric-head"><span>DESEMPENHO</span><span class="metric-icon orange">◷</span></div><div class="metric-value">—</div><div class="metric-foot">Aguardando histórico real</div></article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel games-panel">
+            <div class="panel-heading"><div><div class="eyebrow">CENTRAL DE PARTIDAS</div><h2>Jogos do dia</h2></div><button class="text-button" data-view-link="matches">Ver todos <span>→</span></button></div>
+            <div class="filter-row"><div class="search-box"><span>⌕</span><input id="gameSearch" type="search" placeholder="Buscar time ou campeonato..." aria-label="Buscar time ou campeonato"></div><button class="filter-button" id="filterButton">☷ <span>Filtros</span></button></div>
+            <div class="empty-state"><div class="empty-graphic"><span class="empty-ball">⚽</span><span class="empty-search">⌕</span></div><h3>Nenhum jogo carregado</h3><p>Os jogos aparecerão aqui assim que a fonte de dados esportivos estiver conectada. Nenhuma partida ou estatística será inventada.</p><span class="source-status"><i></i> FONTE DE DADOS NÃO CONFIGURADA</span></div>
+          </article>
+
+          <aside class="right-column">
+            <article class="panel quick-panel"><div class="panel-heading"><div><div class="eyebrow">FERRAMENTAS</div><h2>Acesso rápido</h2></div></div><button class="quick-action" data-view-link="analysis"><span class="quick-icon purple">⌁</span><span><strong>Nova análise</strong><small>Avaliar uma partida</small></span><b>→</b></button><button class="quick-action" data-view-link="history"><span class="quick-icon green">▤</span><span><strong>Meu histórico</strong><small>Acompanhar resultados</small></span><b>→</b></button></article>
+            <article class="panel principles-panel"><div class="eyebrow">CRITÉRIOS TRADER PRO</div><h2>Dados antes da entrada.</h2><p>Uma oportunidade só deve ser apresentada quando houver informação suficiente para avaliar o mercado.</p><div class="principle"><span>01</span><div><strong>Probabilidade estimada</strong><small>Baseada em dados verificáveis</small></div></div><div class="principle"><span>02</span><div><strong>Valor esperado (EV)</strong><small>Comparação com a odd disponível</small></div></div><div class="principle"><span>03</span><div><strong>Gestão de risco</strong><small>Transparência sobre incertezas</small></div></div></article>
+          </aside>
+        </section>
+        <footer class="footer"><span>TRADER PRO <b>•</b> SPORTS INTELLIGENCE</span><span>Análises informativas. Não existe garantia de resultado.</span></footer>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
